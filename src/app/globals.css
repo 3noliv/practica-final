@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Animaciones globales */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+body {
+  @apply bg-gray-100 text-gray-900;
+}
+
+/* Estilo base para enlaces */
+a {
+  @apply text-gray-200 transition duration-200 ease-in-out;
+}
+a:hover {
+  @apply text-yellow-400;
+}
+
+/* Botones */
+button {
+  @apply bg-blue-600 text-white px-4 py-2 rounded transition duration-200;
+}
+button:hover {
+  @apply bg-blue-500;
+}
+button:focus {
+  @apply ring-2 ring-blue-300 outline-none;
+}
+
+/* Tarjetas */
+.card {
+  @apply bg-white shadow-lg rounded-lg p-4 hover:shadow-2xl transition-transform transform duration-200 ease-in-out;
+}
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* Animaciones en entradas */
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
