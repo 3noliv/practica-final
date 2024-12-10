@@ -21,14 +21,16 @@ export default function Register() {
 
   const handleSubmit = async (values, { setSubmitting, setStatus }) => {
     try {
-      await axios.post(
+      const response = await axios.post(
         "https://bildy-rpmaya.koyeb.app/api/user/register",
         values
       );
-      setStatus("Registro exitoso. Por favor, verifica tu correo electrónico.");
-      router.push("/auth/validate"); // Redirigir a la validación
+      const token = response.data.token;
+      localStorage.setItem("jwt", token); // Guardar el token del registro en localStorage
+      setStatus("Registro exitoso. Por favor, valida tu correo.");
+      router.push("/auth/validate"); // Redirigir a validación
     } catch (error) {
-      setStatus("Error al registrar. Intenta de nuevo.");
+      setStatus("Error en el registro. Intenta de nuevo.");
     } finally {
       setSubmitting(false);
     }
@@ -55,7 +57,7 @@ export default function Register() {
                 type="email"
                 id="email"
                 name="email"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border rounded-md"
               />
               <ErrorMessage
                 name="email"
@@ -74,7 +76,7 @@ export default function Register() {
                 type="password"
                 id="password"
                 name="password"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border rounded-md"
               />
               <ErrorMessage
                 name="password"
@@ -84,14 +86,12 @@ export default function Register() {
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Registrando..." : "Registrar"}
             </button>
-            {status && (
-              <p className="mt-4 text-center text-sm text-gray-600">{status}</p>
-            )}
+            {status && <p className="mt-4 text-center text-sm">{status}</p>}
           </Form>
         )}
       </Formik>

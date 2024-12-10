@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 
 export default function AddProject() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [clients, setClients] = useState([]);
+  const [loadingClients, setLoadingClients] = useState(true);
   const router = useRouter();
 
   const initialValues = {
@@ -36,6 +38,27 @@ export default function AddProject() {
       province: Yup.string().required("La provincia es obligatoria"),
     }),
   });
+
+  useEffect(() => {
+    const fetchClients = async () => {
+      const token = localStorage.getItem("jwt");
+      try {
+        const response = await axios.get(
+          "https://bildy-rpmaya.koyeb.app/api/client",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setClients(response.data);
+      } catch (error) {
+        console.error("Error al cargar clientes:", error.message);
+      } finally {
+        setLoadingClients(false);
+      }
+    };
+
+    fetchClients();
+  }, []);
 
   const handleSubmit = async (
     values,
@@ -127,15 +150,23 @@ export default function AddProject() {
               >
                 Cliente
               </label>
-              <Field
-                as="select"
-                id="clientId"
-                name="clientId"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              >
-                <option value="">Seleccionar Cliente</option>
-                {/* Aquí deberías mapear los clientes */}
-              </Field>
+              {loadingClients ? (
+                <p>Cargando clientes...</p>
+              ) : (
+                <Field
+                  as="select"
+                  id="clientId"
+                  name="clientId"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                >
+                  <option value="">Seleccionar Cliente</option>
+                  {clients.map((client) => (
+                    <option key={client._id} value={client._id}>
+                      {client.name}
+                    </option>
+                  ))}
+                </Field>
+              )}
               <ErrorMessage
                 name="clientId"
                 component="div"
@@ -254,9 +285,17 @@ export default function AddProject() {
       </Formik>
       <Modal
         isOpen={isModalOpen}
-        text="El proyecto ha sido creado con éxito"
-        buttonText="Volver a Proyectos"
-        onClose={handleModalClose}
+        title="¡Proyecto creado con éxito!"
+        content="El proyecto ha sido agregado correctamente."
+        icon="check"
+        buttons={[
+          {
+            label: "Cerrar",
+            onClick: handleModalClose,
+            className:
+              "bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600",
+          },
+        ]}
       />
     </div>
   );

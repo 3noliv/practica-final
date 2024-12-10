@@ -5,10 +5,11 @@ import * as Yup from "yup";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../context/AuthContext";
+import Link from "next/link";
 
 export default function Login() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login } = useAuth(); // Usar el contexto de autenticación
 
   const initialValues = { email: "", password: "" };
 
@@ -21,18 +22,31 @@ export default function Login() {
 
   const handleSubmit = async (values, { setSubmitting, setStatus }) => {
     try {
+      console.log("Datos enviados para iniciar sesión:", values); // Datos enviados al backend
+
       const response = await axios.post(
         "https://bildy-rpmaya.koyeb.app/api/user/login",
         values
       );
-      const token = response.data.token;
 
+      console.log("Respuesta del backend al iniciar sesión:", response.data); // Respuesta del backend
+
+      const token = response.data.token;
       localStorage.setItem("jwt", token); // Guardar el token
-      login({ name: values.email }); // Guardar el correo como nombre en el contexto y localStorage
+      login({ name: values.email }); // Actualizar el contexto con el usuario autenticado
       setStatus("Sesión iniciada correctamente.");
       router.push("/"); // Redirigir al inicio
     } catch (error) {
-      setStatus("Error al iniciar sesión. Verifica tus credenciales.");
+      console.error(
+        "Error al iniciar sesión:",
+        error.response?.data || error.message
+      );
+
+      if (error.response?.data?.errors?.[0]?.msg === "USER_NOT_VALIDATED") {
+        setStatus("Usuario no validado. Por favor, verifica tu correo.");
+      } else {
+        setStatus("Error al iniciar sesión. Verifica tus credenciales.");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -99,6 +113,12 @@ export default function Login() {
           </Form>
         )}
       </Formik>
+      <p className="mt-4 text-center text-sm">
+        ¿No tienes cuenta?{" "}
+        <Link href="/auth/register" className="text-blue-600 hover:underline">
+          Regístrate aquí
+        </Link>
+      </p>
     </div>
   );
 }

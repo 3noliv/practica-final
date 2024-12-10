@@ -26,7 +26,10 @@ export default function AddClient() {
   const validationSchema = Yup.object({
     name: Yup.string().required("El nombre es obligatorio"),
     cif: Yup.string()
-      .min(8, "El CIF debe tener al menos 8 caracteres")
+      .matches(
+        /^[A-Za-z]\d{8}$/,
+        "El CIF debe empezar con una letra seguida de 8 números"
+      )
       .required("El CIF es obligatorio"),
     address: Yup.object({
       street: Yup.string().required("La calle es obligatoria"),
@@ -237,14 +240,21 @@ export default function AddClient() {
       </Formik>
       <Modal
         isOpen={isModalOpen}
-        title="Cliente creado con éxito"
+        title="¡Cliente creado con éxito!"
         content="¿Quieres asociar un proyecto a este cliente?"
+        icon="check"
         buttons={[
-          { label: "Sí, vamos", onClick: handleRedirect },
+          {
+            label: "Sí, vamos",
+            onClick: handleRedirect,
+            className:
+              "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600",
+          },
           {
             label: "Cerrar",
             onClick: handleModalClose,
-            className: "bg-gray-500 text-white px-4 py-2 rounded",
+            className:
+              "bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600",
           },
         ]}
       />

@@ -27,7 +27,7 @@ export default function AuthStatus() {
 
   return (
     <div className="flex flex-col items-center justify-center space-y-2 p-4">
-      <p className="text-gray-700">Logueado como:</p>
+      <p className="text-gray-500">Logueado como:</p>
       <p className="font-bold">{user?.name || "Usuario"}</p>
       <button
         onClick={handleLogout}
