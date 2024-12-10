@@ -3,6 +3,7 @@ import Nav from "../components/Nav";
 import { AuthProvider } from "../context/AuthContext";
 import ClientRedirect from "../components/ClientRedirect";
 import DynamicTitle from "../components/DynamicTitle";
+import PageTransition from "../components/PageTransition";
 
 export default function RootLayout({ children }) {
   return (
@@ -17,9 +18,11 @@ export default function RootLayout({ children }) {
       <body className="bg-gray-100 text-gray-900 flex">
         <AuthProvider>
           <Nav />
-          <DynamicTitle /> {/* Actualización dinámica del título */}
-          <ClientRedirect /> {/* Redirección basada en los clientes */}
-          <main className="flex-1 p-6">{children}</main>
+          <DynamicTitle />
+          <ClientRedirect />
+          <main className="flex-1 p-6">
+            <PageTransition>{children}</PageTransition>
+          </main>
         </AuthProvider>
       </body>
     </html>

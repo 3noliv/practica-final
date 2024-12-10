@@ -8,7 +8,7 @@ export default function DynamicTitle() {
 
   useEffect(() => {
     const titles = {
-      "/": "Bildy | Home",
+      "/": "Bildy | Home Page",
       "/clients": "Bildy | Clientes",
       "/clients/add": "Bildy | Añadir Cliente",
       "/projects": "Bildy | Proyectos",
